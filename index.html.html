@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة المعدل والنسبة | مراد الفاخري</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;
+font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#f9fbff);color:#172033}
+.card{width:min(530px,100%);background:#fff;border-radius:25px;padding:27px;box-shadow:0 15px 50px rgba(30,60,110,.13);border:1px solid #e5ebf5}
+.head{text-align:center;margin-bottom:23px}.icon{font-size:42px}.head h1{margin:5px 0 7px;font-size:26px}.sub{margin:0;color:#718096;font-size:14px;line-height:1.7}
+.field{margin:17px 0}label{display:block;font-weight:700;margin-bottom:8px}.max{font-weight:400;color:#7b8798;font-size:13px}
+input{width:100%;padding:15px;border:2px solid #e2e8f0;border-radius:13px;font-size:18px;outline:none;text-align:right}
+input:focus{border-color:#4678e8;box-shadow:0 0 0 4px rgba(70,120,232,.1)}
+button{width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;background:#4678e8;color:#fff;box-shadow:0 8px 20px rgba(70,120,232,.22);margin-top:5px}
+button:hover{background:#3869d5}.secondary{background:#eef2f7;color:#354052;box-shadow:none;margin-top:10px}
+.error{display:none;color:#c0392b;font-size:13px;margin-top:7px}
+.result{display:none;margin-top:20px}.result.show{display:block}
+.main-result{background:#f4f7ff;border:1px solid #dce7ff;border-radius:18px;padding:20px;text-align:center}
+.small-title{color:#64748b;font-size:14px}.percentage{font-size:43px;font-weight:800;color:#315fc7;margin:5px 0}
+.grade{display:inline-block;background:#fff;border:1px solid #dce7ff;border-radius:30px;padding:7px 18px;font-weight:700;color:#315fc7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.box{background:#fafbfe;border:1px solid #e7ebf3;border-radius:14px;padding:13px;text-align:center}.box b{display:block;font-size:19px;margin-top:5px}
+.share{background:#172033;margin-top:12px}.details{text-align:center;color:#667085;font-size:13px;margin-top:12px;line-height:1.8}
+footer{text-align:center;margin-top:21px;padding-top:16px;border-top:1px solid #edf0f5;color:#7b8494;font-size:13px}footer strong{color:#315fc7}
+@media(max-width:390px){.card{padding:20px}.grid{grid-template-columns:1fr}.percentage{font-size:38px}}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="head">
+<div class="icon">🎓</div>
+<h1>حاسبة المعدل والنسبة</h1>
+<p class="sub">أدخل مجموع درجاتك في السنتين واحصل على النتيجة النهائية والتقدير.</p>
+</div>
+
+<div class="field">
+<label for="year1">مجموع درجات السنة الأولى <span class="max">(من 900)</span></label>
+<input id="year1" type="number" min="0" max="900" step="0.01" placeholder="مثال: 794">
+<div id="err1" class="error">أدخل درجة من 0 إلى 900.</div>
+</div>
+
+<div class="field">
+<label for="year2">مجموع درجات السنة الثانية <span class="max">(من 1000)</span></label>
+<input id="year2" type="number" min="0" max="1000" step="0.01" placeholder="مثال: 900">
+<div id="err2" class="error">أدخل درجة من 0 إلى 1000.</div>
+</div>
+
+<button onclick="calculate()">احسب النتيجة</button>
+<button class="secondary" onclick="resetCalc()">مسح البيانات</button>
+
+<section id="result" class="result">
+<div class="main-result">
+<div class="small-title">النسبة الإجمالية</div>
+<div id="percentage" class="percentage">0%</div>
+<div id="grade" class="grade">—</div>
+<div class="grid">
+<div class="box">السنة الأولى<b id="p1">0%</b></div>
+<div class="box">السنة الثانية<b id="p2">0%</b></div>
+</div>
+<div id="details" class="details"></div>
+</div>
+<button class="share" onclick="shareResult()">📤 مشاركة النتيجة</button>
+</section>
+
+<footer>تم التطوير بواسطة: <strong>مراد الفاخري</strong> ❤️</footer>
+</main>
+
+<script>
+let lastText='';
+function fmt(n){return Number(n).toFixed(2).replace(/\.00$/,'')}
+function calculate(){
+ const y1=parseFloat(document.getElementById('year1').value), y2=parseFloat(document.getElementById('year2').value);
+ const v1=Number.isFinite(y1)&&y1>=0&&y1<=900, v2=Number.isFinite(y2)&&y2>=0&&y2<=1000;
+ document.getElementById('err1').style.display=v1?'none':'block';
+ document.getElementById('err2').style.display=v2?'none':'block';
+ if(!v1||!v2)return;
+ const total=y1+y2, pct=total/1900*100, p1=y1/900*100, p2=y2/1000*100;
+ let grade=pct>=90?'ممتاز ⭐':pct>=80?'جيد جداً 🌟':pct>=70?'جيد 👍':pct>=60?'مقبول': 'ضعيف';
+ document.getElementById('percentage').textContent=fmt(pct)+'%';
+ document.getElementById('p1').textContent=fmt(p1)+'%';
+ document.getElementById('p2').textContent=fmt(p2)+'%';
+ document.getElementById('grade').textContent=grade;
+ document.getElementById('details').innerHTML=`المجموع المحصل: <b>${fmt(total)}</b> من <b>1900</b> درجة`;
+ document.getElementById('result').classList.add('show');
+ lastText=`🎓 النتيجة النهائية\nالمجموع: ${fmt(total)} / 1900\nالنسبة: ${fmt(pct)}%\nالتقدير: ${grade}\n\nتم التطوير بواسطة: مراد الفاخري`;
+}
+async function shareResult(){
+ if(!lastText) return;
+ if(navigator.share){try{await navigator.share({title:'نتيجتي',text:lastText});}catch(e){}}
+ else{await navigator.clipboard.writeText(lastText);alert('تم نسخ النتيجة، تقدر تلصقها ومشاركتها.');}
+}
+function resetCalc(){
+ document.getElementById('year1').value='';document.getElementById('year2').value='';
+ document.getElementById('result').classList.remove('show');
+ document.getElementById('err1').style.display='none';document.getElementById('err2').style.display='none';
+ lastText='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});
+</script>
+</body>
+</html>
